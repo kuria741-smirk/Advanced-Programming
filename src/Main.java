@@ -1,77 +1,56 @@
-import Lecture1_adt.*; // Import all classes from Lecture1_adt package to be used in this client code
+import Lecture1_adt.*;
+import Lecture4_interfaces_abstract_classes.*;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.util.List;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-/*
-* Client Code for accessing the Lecture1_adt.TransactionInterface.java module
+/**
+ * Client Code - Main class.
+ *
+ * Existing lecture test functions are preserved unchanged.
+ * Q4 adds testDepositTransaction(), testWithdrawalTransaction(),
+ * and testPolymorphism() below.
  */
 public class Main {
 
+    // ================================================================
+    // Existing lecture test functions (unchanged)
+    // ================================================================
+
     public static void testTransaction1() {
-        Calendar d1 = new GregorianCalendar(); // d1 is an Object [Objects are Reference types]
-        Lecture1_adt.Transaction1 t1 = new Lecture1_adt.Transaction1(1000, d1); // amount and d1 are arguments
+        Calendar d1 = new GregorianCalendar();
+        Lecture1_adt.Transaction1 t1 = new Lecture1_adt.Transaction1(1000, d1);
 
         System.out.println(t1.toString());
         System.out.println("Lecture1_adt.TransactionInterface Amount: \t " + t1.amount);
-        System.out.println("Lecture1_adt.TransactionInterface Date: \t " + t1.date);
-
-        // Please note that the Client Codes can access the data in the class directly through the dot operator
-        // This kind of exposure is a threat to both the Representation Independence and Preservation of Invariants
+        System.out.println("Lecture1_adt.TransactionInterface Date: \t "   + t1.date);
     }
 
-
-    /** @return a transaction of same amount as t, one month later
-     * This is a PRODUCER of the class Lecture1_adt.Transaction2
-     * This code will help demostrate the Design exposures still present in transaction2 class
-     * */
-
     public static Transaction2 makeNextPayment(Transaction2 t) {
-        Calendar d =  t.getDate();
+        Calendar d = t.getDate();
         d.add(Calendar.MONTH, 1);
         return new Transaction2(t.getAmount(), d);
     }
 
-    /*
-    Testing Transaction2 class
-     */
     public static void testTransaction2() {
-
         Calendar d1 = new GregorianCalendar();
-
-        Lecture1_adt.Transaction2 t = new Lecture1_adt.Transaction2(1000, d1);
-
+        Lecture1_adt.Transaction2 t       = new Lecture1_adt.Transaction2(1000, d1);
         Lecture1_adt.Transaction2 modified_t = makeNextPayment(t);
 
         System.out.println("\n\nState of the Object T1 After Client Code Tried to Change the Amount");
-        System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+modified_t.getAmount());
-        System.out.println("Lecture1_adt.TransactionInterface Date: \t "+modified_t.getDate().getTime());
+        System.out.println("Lecture1_adt.TransactionInterface Amount: \t " + modified_t.getAmount());
+        System.out.println("Lecture1_adt.TransactionInterface Date: \t "   + modified_t.getDate().getTime());
 
         System.out.println("\n\nHow does T2 Look Like?????");
-        System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+modified_t.getAmount());
-        System.out.println("Lecture1_adt.TransactionInterface Date: \t "+modified_t.getDate().getTime());
-
-        /* Please note that Although we have solved the problem of Transaction1
-        * And client code can no longer use the dot (.) operator to directly access the data
-        * There is still some exposure especially if we pass an object of a previous Transaction2 to create a new Transaction2 object
-         */
-
+        System.out.println("Lecture1_adt.TransactionInterface Amount: \t " + modified_t.getAmount());
+        System.out.println("Lecture1_adt.TransactionInterface Date: \t "   + modified_t.getDate().getTime());
     }
 
-
-    /** @return a list of 12 monthly payments of identical amounts
-     * This code will help demostrate the Design exposures still present in transaction3 class
-     * */
-    public static List<Transaction3> makeYearOfPayments (int amount) throws NullPointerException {
-
-        List<Transaction3> listOfTransaction3s = new ArrayList<Transaction3>();
+    public static List<Transaction3> makeYearOfPayments(int amount) throws NullPointerException {
+        List<Transaction3> listOfTransaction3s = new ArrayList<>();
         Calendar date = new GregorianCalendar(2024, Calendar.JANUARY, 3);
-
-
         for (int i = 0; i < 12; i++) {
             listOfTransaction3s.add(new Transaction3(amount, date));
             date.add(Calendar.MONTH, 1);
@@ -79,42 +58,20 @@ public class Main {
         return listOfTransaction3s;
     }
 
-    /*
-    Testing Transaction3 class
-     */
     public static void testTransaction3() {
-
         List<Transaction3> allPaymentsIn2024 = makeYearOfPayments(1000);
-
         for (Transaction3 t3 : allPaymentsIn2024) {
-
-            // Display all the 12 Transactions
             for (Transaction3 transact : allPaymentsIn2024) {
                 System.out.println("\n\n  ::::::::::::::::::::::::::::::::::::::::::::\n");
-                System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+transact.getAmount());
-                System.out.println("Lecture1_adt.TransactionInterface Date: \t "+transact.getDate().getTime());
+                System.out.println("Lecture1_adt.TransactionInterface Amount: \t " + transact.getAmount());
+                System.out.println("Lecture1_adt.TransactionInterface Date: \t "   + transact.getDate().getTime());
             }
         }
-
-        /* Please Check all the 12 transactions displayed and hwo their dates look like
-         * Note that Although Transaction3 class resolves to an extent the exposure in Transaction2 class
-         * There is still some exposure especially if we pass an object of a previous Transaction3 to create a
-         * new Transaction3 object
-         */
     }
 
-
-    /** @return a list of 12 monthly payments of identical amounts
-     * This code Show that by judicious copying and defensive programming we eliminate the exposure in Transaction3
-     * As defined in the constructor of Transaction4 class
-     * */
-
-    public static List<Transaction4> makeYearOfPaymentsFinal (int amount) throws NullPointerException {
-
-        List<Transaction4> listOfTransaction4s = new ArrayList<Transaction4>();
+    public static List<Transaction4> makeYearOfPaymentsFinal(int amount) throws NullPointerException {
+        List<Transaction4> listOfTransaction4s = new ArrayList<>();
         Calendar date = new GregorianCalendar(2024, Calendar.JANUARY, 3);
-
-
         for (int i = 0; i < 12; i++) {
             listOfTransaction4s.add(new Transaction4(amount, date));
             date.add(Calendar.MONTH, 1);
@@ -122,35 +79,159 @@ public class Main {
         return listOfTransaction4s;
     }
 
-    /*
-    Testing Transaction3 class
-     */
     public static void testTransaction4() {
-
-        /*
-         * Call the function to make all the Twelve transaction in a year of our business
-         */
-
         List<Transaction4> transactionsIn2024 = makeYearOfPaymentsFinal(1200);
-
-        // Display all the 12 Transactions
         for (Transaction4 transact : transactionsIn2024) {
             System.out.println("\n\n  ::::::::::::::::::::::::::::::::::::::::::::\n");
-            System.out.println("Lecture1_adt.TransactionInterface Amount: \t "+transact.getAmount());
-            System.out.println("Lecture1_adt.TransactionInterface Date: \t "+transact.getDate().getTime());
+            System.out.println("Lecture1_adt.TransactionInterface Amount: \t " + transact.getAmount());
+            System.out.println("Lecture1_adt.TransactionInterface Date: \t "   + transact.getDate().getTime());
         }
-
-        // Please Take a look at all the 12 transaction now and compare with the outputs of the Transaction3 class
     }
 
 
-    public static void main(String[] args) {
-        // This is the client code
-        // Uncomment the following lines to test the class which you would like to test
+    // ================================================================
+    // Q4 – New client code: DepositTransaction tests
+    // ================================================================
 
-        // testTransaction1()
-        // testTransaction2()
-        // testTransaction3()
-        // testTransaction4()
+    public static void testDepositTransaction() {
+        System.out.println("\n============================================================");
+        System.out.println("  TEST: DepositTransaction");
+        System.out.println("============================================================");
+
+        Calendar date       = new GregorianCalendar();
+        BankAccount account = new BankAccount(500.00);
+        System.out.println("Initial balance: " + account.getBalance());
+
+        // --- Subtype object, subtype reference ---
+        DepositTrasaction deposit = new DepositTrasaction(200, date);
+        deposit.printTransactionDetails();
+        deposit.apply(account);
+        System.out.println("Balance after deposit: " + account.getBalance());
+
+        // --- Type-cast subtype to supertype, then call apply() ---
+        // The reference is BaseTransaction (supertype), object is DepositTrasaction.
+        // Java resolves apply() at RUNTIME (late binding / dynamic dispatch),
+        // so DepositTrasaction.apply() is called — not BaseTransaction.apply().
+        System.out.println("\n-- Type-casting DepositTrasaction → BaseTransaction --");
+        BaseTransaction castedDeposit = (BaseTransaction) new DepositTrasaction(100, date);
+        castedDeposit.printTransactionDetails();
+        castedDeposit.apply(account);   // late binding → DepositTrasaction.apply()
+        System.out.println("Balance after casted deposit: " + account.getBalance());
+    }
+
+
+    // ================================================================
+    // Q4 – New client code: WithdrawalTransaction tests
+    // ================================================================
+
+    public static void testWithdrawalTransaction() {
+        System.out.println("\n============================================================");
+        System.out.println("  TEST: WithdrawalTransaction");
+        System.out.println("============================================================");
+
+        Calendar date       = new GregorianCalendar();
+        BankAccount account = new BankAccount(1000.00);
+        System.out.println("Initial balance: " + account.getBalance());
+
+        // --- Normal withdrawal (sufficient funds) ---
+        WithdrawalTransaction w1 = new WithdrawalTransaction(300, date);
+        w1.printTransactionDetails();
+        w1.apply(account);
+        System.out.println("Balance after withdrawal: " + account.getBalance());
+
+        // --- Reverse the withdrawal (Q2) ---
+        System.out.println("\n-- Reversing withdrawal --");
+        boolean reversed = w1.reverse();
+        System.out.println("Reversal successful: " + reversed);
+        System.out.println("Balance after reversal: " + account.getBalance());
+
+        // --- Insufficient funds, allowPartial = false (Q3, throws) ---
+        System.out.println("\n-- Withdrawal exceeding balance (allowPartial=false) --");
+        WithdrawalTransaction w2 = new WithdrawalTransaction(9999, date);
+        try {
+            w2.apply(account, false);
+        } catch (InsufficientFundsException e) {
+            System.out.println("Caught InsufficientFundsException: " + e.getMessage());
+            System.out.printf ("Shortfall: %.2f%n", e.getShortfall());
+        }
+        System.out.println("Balance unchanged: " + account.getBalance());
+
+        // --- Partial withdrawal: 0 < balance < amount (Q3) ---
+        System.out.println("\n-- Partial withdrawal (allowPartial=true, balance < amount) --");
+        BankAccount smallAccount = new BankAccount(80.00);
+        WithdrawalTransaction w3 = new WithdrawalTransaction(200, date);
+        try {
+            w3.apply(smallAccount, true);
+        } catch (InsufficientFundsException e) {
+            System.err.println("Unexpected exception: " + e.getMessage());
+        }
+        w3.printTransactionDetails();
+        System.out.println("Balance after partial withdrawal: " + smallAccount.getBalance());
+    }
+
+
+    // ================================================================
+    // Q4 – New client code: Polymorphism (early vs. late binding)
+    // ================================================================
+
+    public static void testPolymorphism() {
+        System.out.println("\n============================================================");
+        System.out.println("  TEST: Polymorphism — Early vs. Late Binding");
+        System.out.println("============================================================");
+
+        Calendar date       = new GregorianCalendar();
+        BankAccount account = new BankAccount(500.00);
+
+        /*
+         * EARLY BINDING (compile-time / static dispatch):
+         * The reference type AND the object type are both BaseTransaction.
+         * The compiler resolves apply() to BaseTransaction.apply() at
+         * compile time because there is no subtype to dispatch to.
+         * Result: no balance change (BaseTransaction.apply() is informational).
+         */
+        System.out.println("-- Early Binding: BaseTransaction reference, BaseTransaction object --");
+        BaseTransaction earlyBound = new BaseTransaction(50, date);
+        earlyBound.apply(account);
+        System.out.println("Balance (unchanged): " + account.getBalance());
+
+        /*
+         * LATE BINDING (runtime / dynamic dispatch):
+         * The reference type is BaseTransaction (supertype), but the actual
+         * object at runtime is DepositTrasaction (subtype).
+         * The JVM looks up the method in the actual object's class at runtime
+         * and dispatches to DepositTrasaction.apply() → balance increases.
+         */
+        System.out.println("\n-- Late Binding: BaseTransaction reference, DepositTrasaction object --");
+        BaseTransaction lateDeposit = new DepositTrasaction(150, date);
+        lateDeposit.apply(account);   // JVM dispatches to DepositTrasaction.apply()
+        System.out.println("Balance after late-bound deposit: " + account.getBalance());
+
+        /*
+         * LATE BINDING with WithdrawalTransaction:
+         * Same principle — the supertype reference holds a WithdrawalTransaction.
+         * apply() resolves to WithdrawalTransaction.apply() at runtime.
+         */
+        System.out.println("\n-- Late Binding: BaseTransaction reference, WithdrawalTransaction object --");
+        BaseTransaction lateWithdraw = new WithdrawalTransaction(100, date);
+        lateWithdraw.apply(account);  // JVM dispatches to WithdrawalTransaction.apply()
+        System.out.println("Balance after late-bound withdrawal: " + account.getBalance());
+    }
+
+
+    // ================================================================
+    // main()
+    // ================================================================
+
+    public static void main(String[] args) {
+        // Existing lecture tests (uncomment as needed)
+        // testTransaction1();
+        // testTransaction2();
+        // testTransaction3();
+        // testTransaction4();
+
+        // Q4 – Assignment tests
+        testDepositTransaction();
+        testWithdrawalTransaction();
+        testPolymorphism();
     }
 }

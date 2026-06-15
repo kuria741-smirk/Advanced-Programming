@@ -1,51 +1,84 @@
 package Lecture4_interfaces_abstract_classes;
 
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Calendar;
 
-public abstract class BaseTransaction implements TransactionInterface {
+/**
+ * Q1 - Concrete class that implements TransactionInterface.
+ *
+ * The starter code made this abstract; the assignment asks us to make it
+ * a CONCRETE class that fully implements the interface, while ensuring
+ * its apply() behaves differently from the subclasses.
+ *
+ * Fields match the starter code exactly (int amount, Calendar date, String transactionID).
+ */
+public class BaseTransaction implements TransactionInterface {
+
+    // --- Fields (preserved from starter code) ---
     private final int amount;
     private final Calendar date;
     private final String transactionID;
 
     /**
-     * Lecture1_adt.TransactionInterface Constructor
-     * @param amount in an integer
-     * @param date: Not null, and must be a Calendar object
-     * @return void
-     * Instialises the field, attributes of a transaction
-     * Creates a object of this
+     * Constructor - mirrors the starter code signature.
+     *
+     * @param amount integer transaction amount
+     * @param date   must not be null; defensively copied to preserve invariants
      */
-    public BaseTransaction(int amount, @NotNull Calendar date)  {
-        this.amount = amount;
-        this.date = (Calendar) date.clone();
-        int uniq = (int) Math.random()*10000;
-        transactionID = date.toString()+uniq;
+    public BaseTransaction(int amount, @NotNull Calendar date) {
+        this.amount        = amount;
+        this.date          = (Calendar) date.clone();   // defensive copy (from lecture)
+        int uniq           = (int)(Math.random() * 10000);
+        this.transactionID = date.toString() + uniq;
     }
 
-    /**
-     * getAmount()
-     * @return integer
-     */
+    // ---------------------------------------------------------------
+    // Q1 – Getter implementations (from TransactionInterface)
+    // ---------------------------------------------------------------
+
+    @Override
     public double getAmount() {
-        return amount; // Because we are dealing with Value types we need not worry about what we return
+        return amount;  // int → double widening; value type, safe to return directly
     }
 
-    /**
-     * getDate()
-     * @return Calendar Object
-     */
+    @Override
     public Calendar getDate() {
-//        return date;    // Because we are dealing with Reference types we need to judiciously copy what our getters return
-        return (Calendar) date.clone(); // Defensive copying or Judicious Copying
+        return (Calendar) date.clone();  // defensive / judicious copy (from lecture)
     }
 
-    // Method to get a unique identifier for the transaction
-    public String getTransactionID(){
-        return  transactionID;
+    @Override
+    public String getTransactionID() {
+        return transactionID;
     }
-    // Method to print a transaction receipt or details
-    public abstract void printTransactionDetails();
-    public abstract void apply(BankAccount ba);
+
+    // ---------------------------------------------------------------
+    // Q1 – printTransactionDetails()
+    // ---------------------------------------------------------------
+
+    @Override
+    public void printTransactionDetails() {
+        System.out.println("=== Base Transaction Details ===");
+        System.out.println("  Transaction ID : " + transactionID);
+        System.out.printf ("  Amount         : %.2f%n", (double) amount);
+        System.out.printf ("  Date           : %tF%n", date);
+        System.out.println("  Type           : BaseTransaction");
+    }
+
+    // ---------------------------------------------------------------
+    // Q1 – apply()
+    //
+    // BaseTransaction.apply() is intentionally DIFFERENT from the
+    // subclass overrides: it is a neutral / informational application
+    // that logs the call but does NOT modify the account balance.
+    // This makes the base behaviour clearly distinct from Deposit
+    // (which credits) and Withdrawal (which debits).
+    // ---------------------------------------------------------------
+
+    @Override
+    public void apply(BankAccount ba) {
+        System.out.printf(
+                "[BaseTransaction] apply() called — Amount: %.2f | Balance unchanged at: %.2f%n",
+                (double) amount, ba.getBalance()
+        );
+    }
 }
